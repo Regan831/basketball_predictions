@@ -1,0 +1,35 @@
+from urllib.request import urlopen
+import pandas as pd
+from bs4 import BeautifulSoup
+import numpy as np
+import matplotlib.pyplot as plt
+
+years = ['2002-03','2003-04','2004-05','2005-06','2006-07','2007-08','2008-09','2009-10','2010-11','2011-12','2012-13','2013-14','2014-15','2015-16','2016-17','2017-18', '2018-19']
+url = "http://www.cbssports.com/collegebasketball/bracketology/nitty-gritty-report/"
+
+r = []
+team_rpi = []
+
+print("Staring scraping for RPI...")
+for year in years:
+    print('starting {}'.format(year))
+    tourney_year = '20' + year[-2:]
+    soup = BeautifulSoup(urlopen(url+year).read(), 'html.parser')
+
+    for row in soup.find_all('tr', {'class': 'row1'}):  
+        if (float(row.find_all('td')[4].get_text()) < 1):
+            team_rpi.append([tourney_year, row.find_all('td')[1].get_text(), row.find_all('td')[4].get_text()])
+        else:
+            break
+        
+    for row in soup.find_all('tr', {'class': 'row2'}):
+        if (float(row.find_all('td')[4].get_text()) < 1):
+            
+            team_rpi.append([tourney_year, row.find_all('td')[1].get_text(), row.find_all('td')[4].get_text()])
+        else:
+            break
+team_rpi = pd.DataFrame(team_rpi, columns = ['Season', 'TeamName', 'rpi'])
+team_rpi.to_pickle("rpi")
+
+
+print("finished writing rpi to csv.")
