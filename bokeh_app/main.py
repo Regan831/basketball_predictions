@@ -8,6 +8,7 @@ from os.path import dirname, join
 # Bokeh basics
 from bokeh.io import curdoc
 from bokeh.models.widgets import Tabs
+from bokeh.plotting import output_file,show
 
 
 # Each tab is drawn by one script
@@ -32,3 +33,7 @@ tabs = Tabs(tabs = [tab1, tab2, tab3, tab4])
 
 # Put the tabs in the current document for display
 curdoc().add_root(tabs)
+
+output_file('plots.html')
+
+show(tabs)
